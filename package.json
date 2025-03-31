@@ -1,6 +1,6 @@
 {
   "name": "@x3a-tech/x3a-contract-ts",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "private": false,
   "files": [
     "dist"
