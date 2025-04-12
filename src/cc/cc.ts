@@ -13,7 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../google/protobuf/timestamp";
 /**
- * Два параметра name, symbol исключающие друг друга,
+ * Два параметра query, ids исключающие друг друга,
  * то есть не может использоваться сразу 2 параметра
  *
  * @generated from protobuf message cc.GetCoinsParams
@@ -28,24 +28,28 @@ export interface GetCoinsParams {
      */
     limit: number;
     /**
-     * @generated from protobuf field: optional string name = 3;
+     * @generated from protobuf field: int32 scope = 3;
      */
-    name?: string; // Для фильтрации по названию
+    scope: number; // в минутах | 60 / 1440 / 10080 / 43200
     /**
-     * @generated from protobuf field: repeated int32 ids = 4;
+     * @generated from protobuf field: bool with_values = 4;
      */
-    ids: number[]; // Для фильтрации по id
+    withValues: boolean; // включать ли price & dynamic
+    /**
+     * @generated from protobuf field: optional string query = 5;
+     */
+    query?: string; // Для фильтрации
+    /**
+     * @generated from protobuf field: repeated int32 ids = 6;
+     */
+    ids: number[]; // Для фильтрации
 }
 /**
  * @generated from protobuf message cc.GetCoinsResponse
  */
 export interface GetCoinsResponse {
     /**
-     * @generated from protobuf field: uint32 status = 1;
-     */
-    status: number;
-    /**
-     * @generated from protobuf field: repeated cc.Coin coins = 2;
+     * @generated from protobuf field: repeated cc.Coin coins = 1;
      */
     coins: Coin[];
 }
@@ -58,47 +62,21 @@ export interface Coin {
      */
     id: number;
     /**
-     * @generated from protobuf field: string symbol = 2;
-     */
-    symbol: string;
-    /**
-     * @generated from protobuf field: string name = 3;
+     * @generated from protobuf field: string name = 2;
      */
     name: string;
     /**
-     * @generated from protobuf field: string icon = 4;
+     * @generated from protobuf field: string icon = 3;
      */
     icon: string;
     /**
-     * @generated from protobuf field: float price = 5;
+     * @generated from protobuf field: optional float price = 4;
      */
-    price: number; // Текущая ценна на данный момент
+    price?: number; // Текущая ценна на данный момент
     /**
-     * @generated from protobuf field: float dynamic = 6;
+     * @generated from protobuf field: optional float dynamic = 5;
      */
-    dynamic: number; // Изменение цены за N времени
-}
-/**
- * @generated from protobuf message cc.GetCoinParams
- */
-export interface GetCoinParams {
-    /**
-     * @generated from protobuf field: int32 id = 1;
-     */
-    id: number; // Для выборки
-}
-/**
- * @generated from protobuf message cc.GetCoinResponse
- */
-export interface GetCoinResponse {
-    /**
-     * @generated from protobuf field: uint32 status = 1;
-     */
-    status: number;
-    /**
-     * @generated from protobuf field: optional cc.Coin coin = 2;
-     */
-    coin?: Coin;
+    dynamic?: number; // Изменение цены за N времени
 }
 /**
  * @generated from protobuf message cc.GetValuesParams
@@ -107,18 +85,18 @@ export interface GetValuesParams {
     /**
      * @generated from protobuf field: int32 id = 1;
      */
-    id: number; // Для выборки
+    id: number;
+    /**
+     * @generated from protobuf field: int32 scope = 2;
+     */
+    scope: number; // в минутах | 60 / 1440 / 10080 / 43200
 }
 /**
  * @generated from protobuf message cc.GetValuesResponse
  */
 export interface GetValuesResponse {
     /**
-     * @generated from protobuf field: uint32 status = 1;
-     */
-    status: number;
-    /**
-     * @generated from protobuf field: repeated cc.CoinValue values = 2;
+     * @generated from protobuf field: repeated cc.CoinValue values = 1;
      */
     values: CoinValue[];
 }
@@ -134,32 +112,6 @@ export interface CoinValue {
      * @generated from protobuf field: google.protobuf.Timestamp date = 2;
      */
     date?: Timestamp;
-}
-/**
- * @generated from protobuf message cc.GetValuesPerDaysParams
- */
-export interface GetValuesPerDaysParams {
-    /**
-     * @generated from protobuf field: int32 id = 1;
-     */
-    id: number; // Для выборки
-    /**
-     * @generated from protobuf field: int32 days = 2;
-     */
-    days: number;
-}
-/**
- * @generated from protobuf message cc.GetValuesPerDaysResponse
- */
-export interface GetValuesPerDaysResponse {
-    /**
-     * @generated from protobuf field: uint32 status = 1;
-     */
-    status: number;
-    /**
-     * @generated from protobuf field: repeated cc.CoinValue values = 2;
-     */
-    values: CoinValue[];
 }
 /**
  * @generated from protobuf enum cc.Method
@@ -196,14 +148,18 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
         super("cc.GetCoinsParams", [
             { no: 1, name: "offset", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "limit", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "scope", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "with_values", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "query", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<GetCoinsParams>): GetCoinsParams {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.offset = 0;
         message.limit = 0;
+        message.scope = 0;
+        message.withValues = false;
         message.ids = [];
         if (value !== undefined)
             reflectionMergePartial<GetCoinsParams>(this, message, value);
@@ -220,10 +176,16 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
                 case /* int32 limit */ 2:
                     message.limit = reader.int32();
                     break;
-                case /* optional string name */ 3:
-                    message.name = reader.string();
+                case /* int32 scope */ 3:
+                    message.scope = reader.int32();
                     break;
-                case /* repeated int32 ids */ 4:
+                case /* bool with_values */ 4:
+                    message.withValues = reader.bool();
+                    break;
+                case /* optional string query */ 5:
+                    message.query = reader.string();
+                    break;
+                case /* repeated int32 ids */ 6:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.ids.push(reader.int32());
@@ -248,12 +210,18 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
         /* int32 limit = 2; */
         if (message.limit !== 0)
             writer.tag(2, WireType.Varint).int32(message.limit);
-        /* optional string name = 3; */
-        if (message.name !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.name);
-        /* repeated int32 ids = 4; */
+        /* int32 scope = 3; */
+        if (message.scope !== 0)
+            writer.tag(3, WireType.Varint).int32(message.scope);
+        /* bool with_values = 4; */
+        if (message.withValues !== false)
+            writer.tag(4, WireType.Varint).bool(message.withValues);
+        /* optional string query = 5; */
+        if (message.query !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.query);
+        /* repeated int32 ids = 6; */
         if (message.ids.length) {
-            writer.tag(4, WireType.LengthDelimited).fork();
+            writer.tag(6, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
                 writer.int32(message.ids[i]);
             writer.join();
@@ -272,13 +240,11 @@ export const GetCoinsParams = new GetCoinsParams$Type();
 class GetCoinsResponse$Type extends MessageType<GetCoinsResponse> {
     constructor() {
         super("cc.GetCoinsResponse", [
-            { no: 1, name: "status", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 2, name: "coins", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Coin }
+            { no: 1, name: "coins", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Coin }
         ]);
     }
     create(value?: PartialMessage<GetCoinsResponse>): GetCoinsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.status = 0;
         message.coins = [];
         if (value !== undefined)
             reflectionMergePartial<GetCoinsResponse>(this, message, value);
@@ -289,10 +255,7 @@ class GetCoinsResponse$Type extends MessageType<GetCoinsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint32 status */ 1:
-                    message.status = reader.uint32();
-                    break;
-                case /* repeated cc.Coin coins */ 2:
+                case /* repeated cc.Coin coins */ 1:
                     message.coins.push(Coin.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -307,12 +270,9 @@ class GetCoinsResponse$Type extends MessageType<GetCoinsResponse> {
         return message;
     }
     internalBinaryWrite(message: GetCoinsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint32 status = 1; */
-        if (message.status !== 0)
-            writer.tag(1, WireType.Varint).uint32(message.status);
-        /* repeated cc.Coin coins = 2; */
+        /* repeated cc.Coin coins = 1; */
         for (let i = 0; i < message.coins.length; i++)
-            Coin.internalBinaryWrite(message.coins[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Coin.internalBinaryWrite(message.coins[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -328,21 +288,17 @@ class Coin$Type extends MessageType<Coin> {
     constructor() {
         super("cc.Coin", [
             { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "symbol", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "price", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
-            { no: 6, name: "dynamic", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "price", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 5, name: "dynamic", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<Coin>): Coin {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
-        message.symbol = "";
         message.name = "";
         message.icon = "";
-        message.price = 0;
-        message.dynamic = 0;
         if (value !== undefined)
             reflectionMergePartial<Coin>(this, message, value);
         return message;
@@ -355,19 +311,16 @@ class Coin$Type extends MessageType<Coin> {
                 case /* int32 id */ 1:
                     message.id = reader.int32();
                     break;
-                case /* string symbol */ 2:
-                    message.symbol = reader.string();
-                    break;
-                case /* string name */ 3:
+                case /* string name */ 2:
                     message.name = reader.string();
                     break;
-                case /* string icon */ 4:
+                case /* string icon */ 3:
                     message.icon = reader.string();
                     break;
-                case /* float price */ 5:
+                case /* optional float price */ 4:
                     message.price = reader.float();
                     break;
-                case /* float dynamic */ 6:
+                case /* optional float dynamic */ 5:
                     message.dynamic = reader.float();
                     break;
                 default:
@@ -385,21 +338,18 @@ class Coin$Type extends MessageType<Coin> {
         /* int32 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int32(message.id);
-        /* string symbol = 2; */
-        if (message.symbol !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.symbol);
-        /* string name = 3; */
+        /* string name = 2; */
         if (message.name !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.name);
-        /* string icon = 4; */
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* string icon = 3; */
         if (message.icon !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.icon);
-        /* float price = 5; */
-        if (message.price !== 0)
-            writer.tag(5, WireType.Bit32).float(message.price);
-        /* float dynamic = 6; */
-        if (message.dynamic !== 0)
-            writer.tag(6, WireType.Bit32).float(message.dynamic);
+            writer.tag(3, WireType.LengthDelimited).string(message.icon);
+        /* optional float price = 4; */
+        if (message.price !== undefined)
+            writer.tag(4, WireType.Bit32).float(message.price);
+        /* optional float dynamic = 5; */
+        if (message.dynamic !== undefined)
+            writer.tag(5, WireType.Bit32).float(message.dynamic);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -411,116 +361,17 @@ class Coin$Type extends MessageType<Coin> {
  */
 export const Coin = new Coin$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetCoinParams$Type extends MessageType<GetCoinParams> {
-    constructor() {
-        super("cc.GetCoinParams", [
-            { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<GetCoinParams>): GetCoinParams {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        if (value !== undefined)
-            reflectionMergePartial<GetCoinParams>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetCoinParams): GetCoinParams {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 id */ 1:
-                    message.id = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetCoinParams, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int32(message.id);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message cc.GetCoinParams
- */
-export const GetCoinParams = new GetCoinParams$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetCoinResponse$Type extends MessageType<GetCoinResponse> {
-    constructor() {
-        super("cc.GetCoinResponse", [
-            { no: 1, name: "status", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 2, name: "coin", kind: "message", T: () => Coin }
-        ]);
-    }
-    create(value?: PartialMessage<GetCoinResponse>): GetCoinResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.status = 0;
-        if (value !== undefined)
-            reflectionMergePartial<GetCoinResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetCoinResponse): GetCoinResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint32 status */ 1:
-                    message.status = reader.uint32();
-                    break;
-                case /* optional cc.Coin coin */ 2:
-                    message.coin = Coin.internalBinaryRead(reader, reader.uint32(), options, message.coin);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetCoinResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint32 status = 1; */
-        if (message.status !== 0)
-            writer.tag(1, WireType.Varint).uint32(message.status);
-        /* optional cc.Coin coin = 2; */
-        if (message.coin)
-            Coin.internalBinaryWrite(message.coin, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message cc.GetCoinResponse
- */
-export const GetCoinResponse = new GetCoinResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class GetValuesParams$Type extends MessageType<GetValuesParams> {
     constructor() {
         super("cc.GetValuesParams", [
-            { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "scope", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<GetValuesParams>): GetValuesParams {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
+        message.scope = 0;
         if (value !== undefined)
             reflectionMergePartial<GetValuesParams>(this, message, value);
         return message;
@@ -532,6 +383,9 @@ class GetValuesParams$Type extends MessageType<GetValuesParams> {
             switch (fieldNo) {
                 case /* int32 id */ 1:
                     message.id = reader.int32();
+                    break;
+                case /* int32 scope */ 2:
+                    message.scope = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -548,6 +402,9 @@ class GetValuesParams$Type extends MessageType<GetValuesParams> {
         /* int32 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int32(message.id);
+        /* int32 scope = 2; */
+        if (message.scope !== 0)
+            writer.tag(2, WireType.Varint).int32(message.scope);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -562,13 +419,11 @@ export const GetValuesParams = new GetValuesParams$Type();
 class GetValuesResponse$Type extends MessageType<GetValuesResponse> {
     constructor() {
         super("cc.GetValuesResponse", [
-            { no: 1, name: "status", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 2, name: "values", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CoinValue }
+            { no: 1, name: "values", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CoinValue }
         ]);
     }
     create(value?: PartialMessage<GetValuesResponse>): GetValuesResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.status = 0;
         message.values = [];
         if (value !== undefined)
             reflectionMergePartial<GetValuesResponse>(this, message, value);
@@ -579,10 +434,7 @@ class GetValuesResponse$Type extends MessageType<GetValuesResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint32 status */ 1:
-                    message.status = reader.uint32();
-                    break;
-                case /* repeated cc.CoinValue values */ 2:
+                case /* repeated cc.CoinValue values */ 1:
                     message.values.push(CoinValue.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -597,12 +449,9 @@ class GetValuesResponse$Type extends MessageType<GetValuesResponse> {
         return message;
     }
     internalBinaryWrite(message: GetValuesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint32 status = 1; */
-        if (message.status !== 0)
-            writer.tag(1, WireType.Varint).uint32(message.status);
-        /* repeated cc.CoinValue values = 2; */
+        /* repeated cc.CoinValue values = 1; */
         for (let i = 0; i < message.values.length; i++)
-            CoinValue.internalBinaryWrite(message.values[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            CoinValue.internalBinaryWrite(message.values[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -667,123 +516,10 @@ class CoinValue$Type extends MessageType<CoinValue> {
  * @generated MessageType for protobuf message cc.CoinValue
  */
 export const CoinValue = new CoinValue$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetValuesPerDaysParams$Type extends MessageType<GetValuesPerDaysParams> {
-    constructor() {
-        super("cc.GetValuesPerDaysParams", [
-            { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "days", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<GetValuesPerDaysParams>): GetValuesPerDaysParams {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.days = 0;
-        if (value !== undefined)
-            reflectionMergePartial<GetValuesPerDaysParams>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetValuesPerDaysParams): GetValuesPerDaysParams {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 id */ 1:
-                    message.id = reader.int32();
-                    break;
-                case /* int32 days */ 2:
-                    message.days = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetValuesPerDaysParams, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int32(message.id);
-        /* int32 days = 2; */
-        if (message.days !== 0)
-            writer.tag(2, WireType.Varint).int32(message.days);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message cc.GetValuesPerDaysParams
- */
-export const GetValuesPerDaysParams = new GetValuesPerDaysParams$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetValuesPerDaysResponse$Type extends MessageType<GetValuesPerDaysResponse> {
-    constructor() {
-        super("cc.GetValuesPerDaysResponse", [
-            { no: 1, name: "status", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 2, name: "values", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CoinValue }
-        ]);
-    }
-    create(value?: PartialMessage<GetValuesPerDaysResponse>): GetValuesPerDaysResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.status = 0;
-        message.values = [];
-        if (value !== undefined)
-            reflectionMergePartial<GetValuesPerDaysResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetValuesPerDaysResponse): GetValuesPerDaysResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint32 status */ 1:
-                    message.status = reader.uint32();
-                    break;
-                case /* repeated cc.CoinValue values */ 2:
-                    message.values.push(CoinValue.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetValuesPerDaysResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint32 status = 1; */
-        if (message.status !== 0)
-            writer.tag(1, WireType.Varint).uint32(message.status);
-        /* repeated cc.CoinValue values = 2; */
-        for (let i = 0; i < message.values.length; i++)
-            CoinValue.internalBinaryWrite(message.values[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message cc.GetValuesPerDaysResponse
- */
-export const GetValuesPerDaysResponse = new GetValuesPerDaysResponse$Type();
 /**
  * @generated ServiceType for protobuf service cc.CC
  */
 export const CC = new ServiceType("cc.CC", [
     { name: "GetCoins", options: {}, I: GetCoinsParams, O: GetCoinsResponse },
-    { name: "GetCoin", options: {}, I: GetCoinParams, O: GetCoinResponse },
-    { name: "GetValuesPerDay", options: {}, I: GetValuesParams, O: GetValuesResponse },
-    { name: "GetValuesPerWeek", options: {}, I: GetValuesParams, O: GetValuesResponse },
-    { name: "GetValuesPerMonth", options: {}, I: GetValuesParams, O: GetValuesResponse }
+    { name: "GetCoinValues", options: {}, I: GetValuesParams, O: GetValuesResponse }
 ]);

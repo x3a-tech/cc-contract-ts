@@ -6,8 +6,6 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CC } from "./cc";
 import type { GetValuesResponse } from "./cc";
 import type { GetValuesParams } from "./cc";
-import type { GetCoinResponse } from "./cc";
-import type { GetCoinParams } from "./cc";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { GetCoinsResponse } from "./cc";
 import type { GetCoinsParams } from "./cc";
@@ -18,29 +16,17 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICCClient {
     /**
-     * Получение монет(ы)
+     * Получение монет
      *
      * @generated from protobuf rpc: GetCoins(cc.GetCoinsParams) returns (cc.GetCoinsResponse);
      */
     getCoins(input: GetCoinsParams, options?: RpcOptions): UnaryCall<GetCoinsParams, GetCoinsResponse>;
     /**
-     * @generated from protobuf rpc: GetCoin(cc.GetCoinParams) returns (cc.GetCoinResponse);
-     */
-    getCoin(input: GetCoinParams, options?: RpcOptions): UnaryCall<GetCoinParams, GetCoinResponse>;
-    /**
      * Получение текущих значений монеты
      *
-     * @generated from protobuf rpc: GetValuesPerDay(cc.GetValuesParams) returns (cc.GetValuesResponse);
+     * @generated from protobuf rpc: GetCoinValues(cc.GetValuesParams) returns (cc.GetValuesResponse);
      */
-    getValuesPerDay(input: GetValuesParams, options?: RpcOptions): UnaryCall<GetValuesParams, GetValuesResponse>;
-    /**
-     * @generated from protobuf rpc: GetValuesPerWeek(cc.GetValuesParams) returns (cc.GetValuesResponse);
-     */
-    getValuesPerWeek(input: GetValuesParams, options?: RpcOptions): UnaryCall<GetValuesParams, GetValuesResponse>;
-    /**
-     * @generated from protobuf rpc: GetValuesPerMonth(cc.GetValuesParams) returns (cc.GetValuesResponse);
-     */
-    getValuesPerMonth(input: GetValuesParams, options?: RpcOptions): UnaryCall<GetValuesParams, GetValuesResponse>;
+    getCoinValues(input: GetValuesParams, options?: RpcOptions): UnaryCall<GetValuesParams, GetValuesResponse>;
 }
 /**
  * @generated from protobuf service cc.CC
@@ -52,7 +38,7 @@ export class CCClient implements ICCClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * Получение монет(ы)
+     * Получение монет
      *
      * @generated from protobuf rpc: GetCoins(cc.GetCoinsParams) returns (cc.GetCoinsResponse);
      */
@@ -61,33 +47,12 @@ export class CCClient implements ICCClient, ServiceInfo {
         return stackIntercept<GetCoinsParams, GetCoinsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: GetCoin(cc.GetCoinParams) returns (cc.GetCoinResponse);
-     */
-    getCoin(input: GetCoinParams, options?: RpcOptions): UnaryCall<GetCoinParams, GetCoinResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetCoinParams, GetCoinResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * Получение текущих значений монеты
      *
-     * @generated from protobuf rpc: GetValuesPerDay(cc.GetValuesParams) returns (cc.GetValuesResponse);
+     * @generated from protobuf rpc: GetCoinValues(cc.GetValuesParams) returns (cc.GetValuesResponse);
      */
-    getValuesPerDay(input: GetValuesParams, options?: RpcOptions): UnaryCall<GetValuesParams, GetValuesResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetValuesParams, GetValuesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: GetValuesPerWeek(cc.GetValuesParams) returns (cc.GetValuesResponse);
-     */
-    getValuesPerWeek(input: GetValuesParams, options?: RpcOptions): UnaryCall<GetValuesParams, GetValuesResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetValuesParams, GetValuesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: GetValuesPerMonth(cc.GetValuesParams) returns (cc.GetValuesResponse);
-     */
-    getValuesPerMonth(input: GetValuesParams, options?: RpcOptions): UnaryCall<GetValuesParams, GetValuesResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+    getCoinValues(input: GetValuesParams, options?: RpcOptions): UnaryCall<GetValuesParams, GetValuesResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetValuesParams, GetValuesResponse>("unary", this._transport, method, opt, input);
     }
 }
