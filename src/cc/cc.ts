@@ -32,10 +32,6 @@ export interface GetCoinsParams {
      */
     scope: number; // в минутах | 60 / 1440 / 10080 / 43200
     /**
-     * @generated from protobuf field: bool with_values = 4;
-     */
-    withValues: boolean; // включать ли price & dynamic
-    /**
      * @generated from protobuf field: optional string query = 5;
      */
     query?: string; // Для фильтрации
@@ -66,17 +62,21 @@ export interface Coin {
      */
     name: string;
     /**
-     * @generated from protobuf field: string icon = 3;
+     * @generated from protobuf field: string symbol = 3;
+     */
+    symbol: string;
+    /**
+     * @generated from protobuf field: string icon = 4;
      */
     icon: string;
     /**
-     * @generated from protobuf field: optional float price = 4;
+     * @generated from protobuf field: float price = 5;
      */
-    price?: number; // Текущая ценна на данный момент
+    price: number; // Текущая ценна на данный момент
     /**
-     * @generated from protobuf field: optional float dynamic = 5;
+     * @generated from protobuf field: float dynamic = 6;
      */
-    dynamic?: number; // Изменение цены за N времени
+    dynamic: number; // Изменение цены за N времени
 }
 /**
  * @generated from protobuf message cc.GetValuesParams
@@ -149,7 +149,6 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
             { no: 1, name: "offset", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "limit", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "scope", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "with_values", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "query", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
@@ -159,7 +158,6 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
         message.offset = 0;
         message.limit = 0;
         message.scope = 0;
-        message.withValues = false;
         message.ids = [];
         if (value !== undefined)
             reflectionMergePartial<GetCoinsParams>(this, message, value);
@@ -178,9 +176,6 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
                     break;
                 case /* int32 scope */ 3:
                     message.scope = reader.int32();
-                    break;
-                case /* bool with_values */ 4:
-                    message.withValues = reader.bool();
                     break;
                 case /* optional string query */ 5:
                     message.query = reader.string();
@@ -213,9 +208,6 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
         /* int32 scope = 3; */
         if (message.scope !== 0)
             writer.tag(3, WireType.Varint).int32(message.scope);
-        /* bool with_values = 4; */
-        if (message.withValues !== false)
-            writer.tag(4, WireType.Varint).bool(message.withValues);
         /* optional string query = 5; */
         if (message.query !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.query);
@@ -289,16 +281,20 @@ class Coin$Type extends MessageType<Coin> {
         super("cc.Coin", [
             { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "price", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 5, name: "dynamic", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+            { no: 3, name: "symbol", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "price", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 6, name: "dynamic", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<Coin>): Coin {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.name = "";
+        message.symbol = "";
         message.icon = "";
+        message.price = 0;
+        message.dynamic = 0;
         if (value !== undefined)
             reflectionMergePartial<Coin>(this, message, value);
         return message;
@@ -314,13 +310,16 @@ class Coin$Type extends MessageType<Coin> {
                 case /* string name */ 2:
                     message.name = reader.string();
                     break;
-                case /* string icon */ 3:
+                case /* string symbol */ 3:
+                    message.symbol = reader.string();
+                    break;
+                case /* string icon */ 4:
                     message.icon = reader.string();
                     break;
-                case /* optional float price */ 4:
+                case /* float price */ 5:
                     message.price = reader.float();
                     break;
-                case /* optional float dynamic */ 5:
+                case /* float dynamic */ 6:
                     message.dynamic = reader.float();
                     break;
                 default:
@@ -341,15 +340,18 @@ class Coin$Type extends MessageType<Coin> {
         /* string name = 2; */
         if (message.name !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* string icon = 3; */
+        /* string symbol = 3; */
+        if (message.symbol !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.symbol);
+        /* string icon = 4; */
         if (message.icon !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.icon);
-        /* optional float price = 4; */
-        if (message.price !== undefined)
-            writer.tag(4, WireType.Bit32).float(message.price);
-        /* optional float dynamic = 5; */
-        if (message.dynamic !== undefined)
-            writer.tag(5, WireType.Bit32).float(message.dynamic);
+            writer.tag(4, WireType.LengthDelimited).string(message.icon);
+        /* float price = 5; */
+        if (message.price !== 0)
+            writer.tag(5, WireType.Bit32).float(message.price);
+        /* float dynamic = 6; */
+        if (message.dynamic !== 0)
+            writer.tag(6, WireType.Bit32).float(message.dynamic);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
