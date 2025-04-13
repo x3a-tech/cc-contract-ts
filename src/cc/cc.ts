@@ -74,7 +74,11 @@ export interface Coin {
      */
     price: number; // Текущая ценна на данный момент
     /**
-     * @generated from protobuf field: float dynamic = 6;
+     * @generated from protobuf field: float price_prev = 6;
+     */
+    pricePrev: number; // Текущая ценна на данный момент
+    /**
+     * @generated from protobuf field: float dynamic = 7;
      */
     dynamic: number; // Изменение цены за N времени
 }
@@ -284,7 +288,8 @@ class Coin$Type extends MessageType<Coin> {
             { no: 3, name: "symbol", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "price", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
-            { no: 6, name: "dynamic", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 6, name: "price_prev", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 7, name: "dynamic", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<Coin>): Coin {
@@ -294,6 +299,7 @@ class Coin$Type extends MessageType<Coin> {
         message.symbol = "";
         message.icon = "";
         message.price = 0;
+        message.pricePrev = 0;
         message.dynamic = 0;
         if (value !== undefined)
             reflectionMergePartial<Coin>(this, message, value);
@@ -319,7 +325,10 @@ class Coin$Type extends MessageType<Coin> {
                 case /* float price */ 5:
                     message.price = reader.float();
                     break;
-                case /* float dynamic */ 6:
+                case /* float price_prev */ 6:
+                    message.pricePrev = reader.float();
+                    break;
+                case /* float dynamic */ 7:
                     message.dynamic = reader.float();
                     break;
                 default:
@@ -349,9 +358,12 @@ class Coin$Type extends MessageType<Coin> {
         /* float price = 5; */
         if (message.price !== 0)
             writer.tag(5, WireType.Bit32).float(message.price);
-        /* float dynamic = 6; */
+        /* float price_prev = 6; */
+        if (message.pricePrev !== 0)
+            writer.tag(6, WireType.Bit32).float(message.pricePrev);
+        /* float dynamic = 7; */
         if (message.dynamic !== 0)
-            writer.tag(6, WireType.Bit32).float(message.dynamic);
+            writer.tag(7, WireType.Bit32).float(message.dynamic);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
