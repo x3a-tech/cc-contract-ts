@@ -40,9 +40,9 @@ export interface GetCoinsParams {
      */
     ids: number[]; // Для фильтрации
     /**
-     * @generated from protobuf field: repeated bool onlyFilter = 7;
+     * @generated from protobuf field: bool onlyFilter = 7;
      */
-    onlyFilter: boolean[];
+    onlyFilter: boolean;
 }
 /**
  * @generated from protobuf message cc.GetCoinsResponse
@@ -159,7 +159,7 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
             { no: 3, name: "scope", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "query", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "onlyFilter", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 8 /*ScalarType.BOOL*/ }
+            { no: 7, name: "onlyFilter", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetCoinsParams>): GetCoinsParams {
@@ -168,7 +168,7 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
         message.limit = 0;
         message.scope = 0;
         message.ids = [];
-        message.onlyFilter = [];
+        message.onlyFilter = false;
         if (value !== undefined)
             reflectionMergePartial<GetCoinsParams>(this, message, value);
         return message;
@@ -197,12 +197,8 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
                     else
                         message.ids.push(reader.int32());
                     break;
-                case /* repeated bool onlyFilter */ 7:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.onlyFilter.push(reader.bool());
-                    else
-                        message.onlyFilter.push(reader.bool());
+                case /* bool onlyFilter */ 7:
+                    message.onlyFilter = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -235,13 +231,9 @@ class GetCoinsParams$Type extends MessageType<GetCoinsParams> {
                 writer.int32(message.ids[i]);
             writer.join();
         }
-        /* repeated bool onlyFilter = 7; */
-        if (message.onlyFilter.length) {
-            writer.tag(7, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.onlyFilter.length; i++)
-                writer.bool(message.onlyFilter[i]);
-            writer.join();
-        }
+        /* bool onlyFilter = 7; */
+        if (message.onlyFilter !== false)
+            writer.tag(7, WireType.Varint).bool(message.onlyFilter);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
